@@ -84,6 +84,7 @@ fileToNames file =
 
         Err parserDeadEnds ->
             Err "Unable to parse Elm file"
+                |> Debug.log "parseError"
 
 
 fromFile : Elm.Syntax.File.File -> Names
@@ -265,7 +266,7 @@ accumulateNamesFromLetDeclaration letDeclaration names =
             in
             { names
                 | functionArguments =
-                    addNameCounts arguments names.functions
+                    addNameCounts arguments names.functionArguments
             }
                 |> accumulateNamesFromExpression expression
 
