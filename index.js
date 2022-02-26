@@ -11,7 +11,7 @@ let worker, flags
 try {
   worker = require('./dist/worker')
 } catch (_) {
-  console.error('Make sure to run "npm run build" first!')
+  console.error('No ./dist/worker.js file found. Make sure to run "npm run build" first!')
   process.exit(1)
 }
 
