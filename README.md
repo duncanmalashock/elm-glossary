@@ -65,7 +65,7 @@ main =
         }
 ```
 
-The script would produce `found-names.json`:
+The script will produce the following `found-names.json`:
 ```json
 {
   "functions": {
