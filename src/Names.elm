@@ -78,52 +78,52 @@ accumulateNamesFromExpression :
     Elm.Syntax.Expression.Expression
     -> Names
     -> Names
-accumulateNamesFromExpression expression current =
+accumulateNamesFromExpression expression names =
     case expression of
         Elm.Syntax.Expression.UnitExpr ->
-            current
+            names
 
         Elm.Syntax.Expression.Application nodes ->
-            current
+            names
 
         Elm.Syntax.Expression.OperatorApplication string infixDirection node1 node2 ->
-            current
+            names
 
         Elm.Syntax.Expression.FunctionOrValue moduleName functionName ->
-            current
+            names
 
         Elm.Syntax.Expression.IfBlock node node1 node2 ->
-            current
+            names
 
         Elm.Syntax.Expression.PrefixOperator string ->
-            current
+            names
 
         Elm.Syntax.Expression.Operator string ->
-            current
+            names
 
         Elm.Syntax.Expression.Integer int ->
-            current
+            names
 
         Elm.Syntax.Expression.Hex int ->
-            current
+            names
 
         Elm.Syntax.Expression.Floatable float ->
-            current
+            names
 
         Elm.Syntax.Expression.Negation node ->
-            current
+            names
 
         Elm.Syntax.Expression.Literal string ->
-            current
+            names
 
         Elm.Syntax.Expression.CharLiteral char ->
-            current
+            names
 
         Elm.Syntax.Expression.TupledExpression nodes ->
-            current
+            names
 
         Elm.Syntax.Expression.ParenthesizedExpression node ->
-            current
+            names
 
         Elm.Syntax.Expression.LetExpression letBlock ->
             let
@@ -136,41 +136,41 @@ accumulateNamesFromExpression expression current =
                     Elm.Syntax.Node.value letBlock.expression
 
                 updatedNames =
-                    current
+                    names
                         |> accumulateNamesFromExpression letExpression
             in
             List.foldl accumulateNamesFromLetDeclaration updatedNames letDeclarations
 
         Elm.Syntax.Expression.CaseExpression caseBlock ->
-            current
+            names
 
         Elm.Syntax.Expression.LambdaExpression lambda ->
-            current
+            names
 
         Elm.Syntax.Expression.RecordExpr nodes ->
-            current
+            names
 
         Elm.Syntax.Expression.ListExpr nodes ->
-            current
+            names
 
         Elm.Syntax.Expression.RecordAccess node1 node2 ->
-            current
+            names
 
         Elm.Syntax.Expression.RecordAccessFunction string ->
-            current
+            names
 
         Elm.Syntax.Expression.RecordUpdateExpression node nodes ->
-            current
+            names
 
         Elm.Syntax.Expression.GLSLExpression string ->
-            current
+            names
 
 
 accumulateNamesFromLetDeclaration :
     Elm.Syntax.Expression.LetDeclaration
     -> Names
     -> Names
-accumulateNamesFromLetDeclaration letDeclaration current =
+accumulateNamesFromLetDeclaration letDeclaration names =
     case letDeclaration of
         Elm.Syntax.Expression.LetFunction fn ->
             let
@@ -178,7 +178,7 @@ accumulateNamesFromLetDeclaration letDeclaration current =
                 functionImplementation =
                     Elm.Syntax.Node.value fn.declaration
             in
-            accumulateNamesFromFunctionImplementation functionImplementation current
+            accumulateNamesFromFunctionImplementation functionImplementation names
 
         Elm.Syntax.Expression.LetDestructuring patternNode expressionNode ->
             let
@@ -190,9 +190,9 @@ accumulateNamesFromLetDeclaration letDeclaration current =
                 expression =
                     Elm.Syntax.Node.value expressionNode
             in
-            { current
+            { names
                 | functionArguments =
-                    addNameCounts arguments current.functions
+                    addNameCounts arguments names.functions
             }
                 |> accumulateNamesFromExpression expression
 
@@ -201,7 +201,7 @@ accumulateNamesFromFunctionImplementation :
     Elm.Syntax.Expression.FunctionImplementation
     -> Names
     -> Names
-accumulateNamesFromFunctionImplementation functionImplementation current =
+accumulateNamesFromFunctionImplementation functionImplementation names =
     let
         functionName : String
         functionName =
@@ -215,9 +215,9 @@ accumulateNamesFromFunctionImplementation functionImplementation current =
 
         updatedNames : Names
         updatedNames =
-            { current
-                | functions = addNameCount functionName current.functions
-                , functionArguments = addNameCounts arguments current.functionArguments
+            { names
+                | functions = addNameCount functionName names.functions
+                , functionArguments = addNameCounts arguments names.functionArguments
             }
 
         expression : Elm.Syntax.Expression.Expression
@@ -231,7 +231,7 @@ accumulateNamesFromDeclaration :
     Elm.Syntax.Declaration.Declaration
     -> Names
     -> Names
-accumulateNamesFromDeclaration declaration current =
+accumulateNamesFromDeclaration declaration names =
     case declaration of
         FunctionDeclaration fn ->
             let
@@ -239,22 +239,22 @@ accumulateNamesFromDeclaration declaration current =
                 functionImplementation =
                     Elm.Syntax.Node.value fn.declaration
             in
-            accumulateNamesFromFunctionImplementation functionImplementation current
+            accumulateNamesFromFunctionImplementation functionImplementation names
 
         AliasDeclaration _ ->
-            current
+            names
 
         CustomTypeDeclaration _ ->
-            current
+            names
 
         PortDeclaration _ ->
-            current
+            names
 
         InfixDeclaration _ ->
-            current
+            names
 
         Destructuring _ _ ->
-            current
+            names
 
 
 patternToNames : Elm.Syntax.Pattern.Pattern -> List String
