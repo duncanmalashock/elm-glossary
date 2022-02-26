@@ -9,8 +9,8 @@ type alias Model =
     { count : Int }
 
 
-modelo : Model
-modelo =
+init : Model
+init =
     { count = 0 }
 
 
@@ -41,7 +41,7 @@ view model =
 main : Program () Model Msg
 main =
     Browser.sandbox
-        { init = modelo
+        { init = init
         , view = view
         , update = update
         }

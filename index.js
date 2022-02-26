@@ -3,7 +3,7 @@ const fs = require("fs")
 
 const config = {
   input: path.join(__dirname, 'src', 'Main.elm'),
-  output: path.join(__dirname, 'glossary', 'Glossary.elm'),
+  output: path.join(__dirname, 'glossary', 'glossary.json'),
 }
 
 let worker, flags
@@ -36,9 +36,9 @@ const handlers = {
     console.log('Read ' + config.input + ' successfully.')
     console.log('Processing output file...')
     try {
-      fs.writeFileSync(config.output, payload, { encoding: 'utf-8' })
-    } catch (_) {
-      console.error("Couldn't write file.")
+      fs.writeFileSync(config.output, JSON.stringify(payload), { encoding: 'utf-8' })
+    } catch (err) {
+      console.error("Couldn't write file. Error: " + err)
       process.exit(1)
     }
     console.log('Wrote ' + config.output + ' successfully.')
