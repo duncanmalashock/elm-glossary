@@ -21,12 +21,17 @@ type Msg
 
 update : Msg -> Model -> Model
 update msg model =
+    let
+        increment : Int
+        increment =
+            1
+    in
     case msg of
         Increment ->
-            { model | count = model.count + 1 }
+            { model | count = model.count + increment }
 
         Decrement ->
-            { model | count = model.count - 1 }
+            { model | count = model.count - increment }
 
 
 view : Model -> Html Msg
