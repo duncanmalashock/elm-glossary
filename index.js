@@ -6,6 +6,14 @@ const config = {
   output: path.join(__dirname, 'dist', 'found-names.json'),
 }
 
+// Delete the previous output file
+// Temporary indicator of failure, since error handling isn't working correctly
+try {
+  fs.unlinkSync(config.output)
+} catch (_) {
+  // Don't error if the file isn't there
+}
+
 let worker, flags
 
 try {
