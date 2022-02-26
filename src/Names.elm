@@ -19,6 +19,23 @@ import Elm.Syntax.Pattern
 import Json.Encode
 
 
+type alias Names =
+    { functions : Dict.Dict String Int
+    , functionArguments : Dict.Dict String Int
+    , types : Dict.Dict String Int
+    , typeVariants : Dict.Dict String Int
+    }
+
+
+new : Names
+new =
+    { functions = Dict.empty
+    , functionArguments = Dict.empty
+    , types = Dict.empty
+    , typeVariants = Dict.empty
+    }
+
+
 fromFile : Elm.Syntax.File.File -> Names
 fromFile file =
     List.map Elm.Syntax.Node.value file.declarations
@@ -34,24 +51,22 @@ toJson names =
                 |> List.sort
                 |> List.map (\( name, count ) -> ( name, Json.Encode.int count ))
                 |> Json.Encode.object
+
+        toObjectFromKeyValues : List ( String, Dict.Dict String Int ) -> Json.Encode.Value
+        toObjectFromKeyValues keyValues =
+            keyValues
+                |> List.map
+                    (\( key, dict ) ->
+                        ( key, countDictToObject dict )
+                    )
+                |> Json.Encode.object
     in
-    Json.Encode.object
-        [ ( "functions", countDictToObject names.functions )
-        , ( "functionArguments", countDictToObject names.functionArguments )
+    toObjectFromKeyValues
+        [ ( "functions", names.functions )
+        , ( "functionArguments", names.functionArguments )
+        , ( "types", names.types )
+        , ( "typeVariants", names.typeVariants )
         ]
-
-
-type alias Names =
-    { functions : Dict.Dict String Int
-    , functionArguments : Dict.Dict String Int
-    }
-
-
-new : Names
-new =
-    { functions = Dict.empty
-    , functionArguments = Dict.empty
-    }
 
 
 updateCount : Maybe Int -> Maybe Int
@@ -244,8 +259,23 @@ accumulateNamesFromDeclaration declaration names =
         AliasDeclaration _ ->
             names
 
-        CustomTypeDeclaration _ ->
-            names
+        CustomTypeDeclaration typeDeclaration ->
+            let
+                name : String
+                name =
+                    Elm.Syntax.Node.value typeDeclaration.name
+
+                variantNames : List String
+                variantNames =
+                    List.map Elm.Syntax.Node.value typeDeclaration.constructors
+                        |> List.map (.name >> Elm.Syntax.Node.value)
+            in
+            { names
+                | types =
+                    addNameCount name names.types
+                , typeVariants =
+                    addNameCounts variantNames names.typeVariants
+            }
 
         PortDeclaration _ ->
             names
