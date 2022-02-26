@@ -3,7 +3,7 @@ const fs = require("fs")
 
 const config = {
   input: path.join(__dirname, 'src', 'Main.elm'),
-  output: path.join(__dirname, 'glossary', 'glossary.json'),
+  output: path.join(__dirname, 'dist', 'found-names.json'),
 }
 
 let worker, flags
