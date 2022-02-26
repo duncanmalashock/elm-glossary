@@ -36,7 +36,7 @@ const handlers = {
     console.log('Read ' + config.input + ' successfully.')
     console.log('Processing output file...')
     try {
-      fs.writeFileSync(config.output, JSON.stringify(payload), { encoding: 'utf-8' })
+      fs.writeFileSync(config.output, JSON.stringify(payload, null, '  '), { encoding: 'utf-8' })
     } catch (err) {
       console.error("Couldn't write file. Error: " + err)
       process.exit(1)

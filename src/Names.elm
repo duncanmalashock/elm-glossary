@@ -26,8 +26,8 @@ fromFile file =
 toJson : Names -> Json.Encode.Value
 toJson names =
     Json.Encode.object
-        [ ( "functions", Json.Encode.list Json.Encode.string names.functions )
-        , ( "functionArguments", Json.Encode.list Json.Encode.string names.functionArguments )
+        [ ( "functions", Json.Encode.list Json.Encode.string (List.sort names.functions) )
+        , ( "functionArguments", Json.Encode.list Json.Encode.string (List.sort names.functionArguments) )
         ]
 
 
