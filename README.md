@@ -3,9 +3,7 @@
 
 ## Usage
 
-`npm run get-names` will generate a `dist/found-names.json` file.
-
-This file contains all names used in the Elm source found in `src/Main.elm`.
+`npm run get-names --source=example/Main.elm`: Generates a `dist/found-names.json` file containing all names used in the Elm source file.
 
 ## Example
 

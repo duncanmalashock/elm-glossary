@@ -1,8 +1,13 @@
 const path = require("path")
 const fs = require("fs")
+var parseArgs = require('minimist')
+
+const argv = parseArgs(process.argv.slice(2));
+
+const sourcePath = argv['source']
 
 const config = {
-  input: path.join(__dirname, 'src', 'Main.elm'),
+  input: path.join(__dirname, sourcePath),
   output: path.join(__dirname, 'dist', 'found-names.json'),
 }
 
@@ -27,7 +32,7 @@ try {
   const input = fs.readFileSync(config.input, { encoding: 'utf-8' })
   flags = { file: input }
 } catch (_) {
-  console.error('Could not read the file')
+  console.error('Could not read file: ' + config.input)
   process.exit(1)
 }
 
