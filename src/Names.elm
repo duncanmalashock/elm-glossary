@@ -1,17 +1,14 @@
-module Names exposing
-    ( Names, empty, fromFile
-    , toJson
-    , combine
-    )
+module Names exposing (Names, fromFilesToJson)
 
 {-|
 
-@docs Names, empty, fromFile
-@docs toJson
+@docs Names, fromFilesToJson
 
 -}
 
 import Dict
+import Elm.Parser
+import Elm.Processing
 import Elm.Syntax.Declaration exposing (Declaration(..))
 import Elm.Syntax.Expression
 import Elm.Syntax.File
@@ -60,6 +57,33 @@ combineDict dict1 dict2 =
     List.foldl (\( name, count ) -> Dict.update name (updateCountBy count))
         dict1
         (Dict.toList dict2)
+
+
+fromFilesToJson : List String -> Json.Encode.Value
+fromFilesToJson files =
+    fromFiles files
+        |> toJson
+
+
+fromFiles : List String -> Names
+fromFiles files =
+    List.map fileToNames files
+        |> List.filterMap Result.toMaybe
+        |> List.foldl combine empty
+
+
+fileToNames : String -> Result String Names
+fileToNames file =
+    case Elm.Parser.parse file of
+        Ok unprocessedFile ->
+            Elm.Processing.process Elm.Processing.init unprocessedFile
+                |> (\processedFile ->
+                        fromFile processedFile
+                   )
+                |> Ok
+
+        Err parserDeadEnds ->
+            Err "Unable to parse Elm file"
 
 
 fromFile : Elm.Syntax.File.File -> Names
