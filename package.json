@@ -8,6 +8,6 @@
   "dependencies": {},
   "scripts": {
     "build": "elm make src/Worker.elm --optimize --output=dist/worker.js",
-    "start": "npm run build && node index.js"
+    "get-names": "npm run build && node index.js"
   }
 }
