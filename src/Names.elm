@@ -24,6 +24,8 @@ type alias Names =
     , functionArguments : Dict.Dict String Int
     , types : Dict.Dict String Int
     , typeVariants : Dict.Dict String Int
+    , typeAliases : Dict.Dict String Int
+    , typeVariables : Dict.Dict String Int
     }
 
 
@@ -33,6 +35,8 @@ new =
     , functionArguments = Dict.empty
     , types = Dict.empty
     , typeVariants = Dict.empty
+    , typeAliases = Dict.empty
+    , typeVariables = Dict.empty
     }
 
 
@@ -66,6 +70,8 @@ toJson names =
         , ( "functionArguments", names.functionArguments )
         , ( "types", names.types )
         , ( "typeVariants", names.typeVariants )
+        , ( "typeAliases", names.typeAliases )
+        , ( "typeVariables", names.typeVariables )
         ]
 
 
@@ -256,8 +262,22 @@ accumulateNamesFromDeclaration declaration names =
             in
             accumulateNamesFromFunctionImplementation functionImplementation names
 
-        AliasDeclaration _ ->
-            names
+        AliasDeclaration aliasDeclaration ->
+            let
+                name : String
+                name =
+                    Elm.Syntax.Node.value aliasDeclaration.name
+
+                typeVariableNames : List String
+                typeVariableNames =
+                    List.map Elm.Syntax.Node.value aliasDeclaration.generics
+            in
+            { names
+                | typeAliases =
+                    addNameCount name names.typeAliases
+                , typeVariables =
+                    addNameCounts typeVariableNames names.typeVariables
+            }
 
         CustomTypeDeclaration typeDeclaration ->
             let
@@ -269,12 +289,18 @@ accumulateNamesFromDeclaration declaration names =
                 variantNames =
                     List.map Elm.Syntax.Node.value typeDeclaration.constructors
                         |> List.map (.name >> Elm.Syntax.Node.value)
+
+                typeVariableNames : List String
+                typeVariableNames =
+                    List.map Elm.Syntax.Node.value typeDeclaration.generics
             in
             { names
                 | types =
                     addNameCount name names.types
                 , typeVariants =
                     addNameCounts variantNames names.typeVariants
+                , typeVariables =
+                    addNameCounts typeVariableNames names.typeVariables
             }
 
         PortDeclaration _ ->
