@@ -5,7 +5,9 @@
   "main": "index.js",
   "author": "Duncan Malashock",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "glob": "^7.2.0"
+  },
   "scripts": {
     "build": "elm make src/Worker.elm --optimize --output=dist/worker.js",
     "get-names": "npm run build && node index.js"

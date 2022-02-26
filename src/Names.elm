@@ -1,11 +1,12 @@
 module Names exposing
-    ( Names, fromFile
+    ( Names, empty, fromFile
     , toJson
+    , combine
     )
 
 {-|
 
-@docs Names, fromFile
+@docs Names, empty, fromFile
 @docs toJson
 
 -}
@@ -30,8 +31,8 @@ type alias Names =
     }
 
 
-new : Names
-new =
+empty : Names
+empty =
     { functions = Dict.empty
     , functionArguments = Dict.empty
     , types = Dict.empty
@@ -42,10 +43,29 @@ new =
     }
 
 
+combine : Names -> Names -> Names
+combine names1 names2 =
+    { functions = combineDict names1.functions names2.functions
+    , functionArguments = combineDict names1.functionArguments names2.functionArguments
+    , types = combineDict names1.types names2.types
+    , typeVariants = combineDict names1.typeVariants names2.typeVariants
+    , typeAliases = combineDict names1.typeAliases names2.typeAliases
+    , typeVariables = combineDict names1.typeVariables names2.typeVariables
+    , ports = combineDict names1.ports names2.ports
+    }
+
+
+combineDict : Dict.Dict String Int -> Dict.Dict String Int -> Dict.Dict String Int
+combineDict dict1 dict2 =
+    List.foldl (\( name, count ) -> Dict.update name (updateCountBy count))
+        dict1
+        (Dict.toList dict2)
+
+
 fromFile : Elm.Syntax.File.File -> Names
 fromFile file =
     List.map Elm.Syntax.Node.value file.declarations
-        |> List.foldl accumulateNamesFromDeclaration new
+        |> List.foldl accumulateNamesFromDeclaration empty
 
 
 toJson : Names -> Json.Encode.Value
@@ -80,12 +100,17 @@ toJson names =
 
 updateCount : Maybe Int -> Maybe Int
 updateCount maybeInt =
+    updateCountBy 1 maybeInt
+
+
+updateCountBy : Int -> Maybe Int -> Maybe Int
+updateCountBy amount maybeInt =
     case maybeInt of
         Just int ->
-            Just (int + 1)
+            Just (int + amount)
 
         Nothing ->
-            Just 1
+            Just amount
 
 
 addNameCount : String -> Dict.Dict String Int -> Dict.Dict String Int

@@ -3,11 +3,11 @@
 
 ## Usage
 
-`npm run get-names --source=example/Main.elm`: Generates a `dist/found-names.json` file containing all names used in the Elm source file.
+`npm run get-names --source=example`: Generates a `dist/found-names.json` file listing all names used in the Elm source files contained in the source directory.
 
 ## Example
 
-Given the following `Main.elm`:
+Given the following `./example/Main.elm`:
 ```elm
 module Main exposing (main)
 
@@ -63,7 +63,7 @@ main =
         }
 ```
 
-The script will produce the following `found-names.json`:
+The script will produce the following `/dist/found-names.json`:
 ```json
 {
   "functions": {

@@ -1,5 +1,7 @@
 const path = require("path")
 const fs = require("fs")
+const glob = require('glob')
+
 var parseArgs = require('minimist')
 
 const argv = parseArgs(process.argv.slice(2));
@@ -29,10 +31,12 @@ try {
 }
 
 try {
-  const input = fs.readFileSync(config.input, { encoding: 'utf-8' })
-  flags = { file: input }
-} catch (_) {
-  console.error('Could not read file: ' + config.input)
+  const input = glob.sync(config.input + '/**/*.elm', {}).map(file => {
+    return fs.readFileSync(file, { encoding: 'utf-8' })
+  })
+  flags = { files: input }
+} catch (err) {
+  console.error('Could not read file: ' + config.input + 'Error: ' + err)
   process.exit(1)
 }
 

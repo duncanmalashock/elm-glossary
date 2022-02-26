@@ -11,7 +11,7 @@ port outgoing : { tag : String, payload : Json.Encode.Value } -> Cmd msg
 
 
 type alias Flags =
-    { file : String
+    { files : List String
     }
 
 
@@ -26,23 +26,22 @@ main =
 
 process : Flags -> Cmd ()
 process flags =
-    case fileToNames flags.file of
-        Ok names ->
-            outgoing
-                { tag = "Ok"
-                , payload = Names.toJson names
-                }
+    outgoing
+        { tag = "Ok"
+        , payload = Names.toJson (filesToNames flags.files)
+        }
 
-        Err error ->
-            outgoing
-                { tag = "Err"
-                , payload = Json.Encode.string error
-                }
+
+filesToNames : List String -> Names.Names
+filesToNames files =
+    List.map fileToNames files
+        |> List.filterMap Result.toMaybe
+        |> List.foldl Names.combine Names.empty
 
 
 fileToNames : String -> Result String Names.Names
-fileToNames moduleContent =
-    case Elm.Parser.parse moduleContent of
+fileToNames file =
+    case Elm.Parser.parse file of
         Ok unprocessedFile ->
             Elm.Processing.process Elm.Processing.init unprocessedFile
                 |> (\processedFile ->
