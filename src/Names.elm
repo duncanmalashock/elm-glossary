@@ -26,6 +26,7 @@ type alias Names =
     , typeVariants : Dict.Dict String Int
     , typeAliases : Dict.Dict String Int
     , typeVariables : Dict.Dict String Int
+    , ports : Dict.Dict String Int
     }
 
 
@@ -37,6 +38,7 @@ new =
     , typeVariants = Dict.empty
     , typeAliases = Dict.empty
     , typeVariables = Dict.empty
+    , ports = Dict.empty
     }
 
 
@@ -72,6 +74,7 @@ toJson names =
         , ( "typeVariants", names.typeVariants )
         , ( "typeAliases", names.typeAliases )
         , ( "typeVariables", names.typeVariables )
+        , ( "ports", names.ports )
         ]
 
 
@@ -303,8 +306,15 @@ accumulateNamesFromDeclaration declaration names =
                     addNameCounts typeVariableNames names.typeVariables
             }
 
-        PortDeclaration _ ->
-            names
+        PortDeclaration portDeclaration ->
+            let
+                name =
+                    Elm.Syntax.Node.value portDeclaration.name
+            in
+            { names
+                | ports =
+                    addNameCount name names.ports
+            }
 
         InfixDeclaration _ ->
             names
