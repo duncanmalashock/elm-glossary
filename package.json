@@ -1,0 +1,13 @@
+{
+  "name": "elm-glossary",
+  "version": "1.0.0",
+  "description": "Keep names consistent using static analysis",
+  "main": "index.js",
+  "author": "Duncan Malashock",
+  "license": "MIT",
+  "dependencies": {},
+  "scripts": {
+    "build": "elm make src/Worker.elm --optimize --output=dist/worker.js",
+    "start": "npm run build && node index.js"
+  }
+}
