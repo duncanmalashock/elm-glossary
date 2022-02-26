@@ -84,7 +84,6 @@ fileToNames file =
 
         Err parserDeadEnds ->
             Err "Unable to parse Elm file"
-                |> Debug.log "parseError"
 
 
 fromFile : Elm.Syntax.File.File -> Names
