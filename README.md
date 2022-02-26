@@ -1,7 +1,7 @@
 # elm-glossary
  Keep names consistent using static analysis
 
-## Demo
+## Usage
 
 Run `npm run get-names` in the terminal. This will generate a `dist/found-names.json` file.
 
