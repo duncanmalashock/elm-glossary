@@ -82,7 +82,7 @@ fileToNames file =
                    )
                 |> Ok
 
-        Err parserDeadEnds ->
+        Err _ ->
             Err "Unable to parse Elm file"
 
 
@@ -156,46 +156,46 @@ accumulateNamesFromExpression expression names =
         Elm.Syntax.Expression.UnitExpr ->
             names
 
-        Elm.Syntax.Expression.Application nodes ->
+        Elm.Syntax.Expression.Application _ ->
             names
 
-        Elm.Syntax.Expression.OperatorApplication string infixDirection node1 node2 ->
+        Elm.Syntax.Expression.OperatorApplication _ _ _ _ ->
             names
 
-        Elm.Syntax.Expression.FunctionOrValue moduleName functionName ->
+        Elm.Syntax.Expression.FunctionOrValue _ _ ->
             names
 
-        Elm.Syntax.Expression.IfBlock node node1 node2 ->
+        Elm.Syntax.Expression.IfBlock _ _ _ ->
             names
 
-        Elm.Syntax.Expression.PrefixOperator string ->
+        Elm.Syntax.Expression.PrefixOperator _ ->
             names
 
-        Elm.Syntax.Expression.Operator string ->
+        Elm.Syntax.Expression.Operator _ ->
             names
 
-        Elm.Syntax.Expression.Integer int ->
+        Elm.Syntax.Expression.Integer _ ->
             names
 
-        Elm.Syntax.Expression.Hex int ->
+        Elm.Syntax.Expression.Hex _ ->
             names
 
-        Elm.Syntax.Expression.Floatable float ->
+        Elm.Syntax.Expression.Floatable _ ->
             names
 
-        Elm.Syntax.Expression.Negation node ->
+        Elm.Syntax.Expression.Negation _ ->
             names
 
-        Elm.Syntax.Expression.Literal string ->
+        Elm.Syntax.Expression.Literal _ ->
             names
 
-        Elm.Syntax.Expression.CharLiteral char ->
+        Elm.Syntax.Expression.CharLiteral _ ->
             names
 
-        Elm.Syntax.Expression.TupledExpression nodes ->
+        Elm.Syntax.Expression.TupledExpression _ ->
             names
 
-        Elm.Syntax.Expression.ParenthesizedExpression node ->
+        Elm.Syntax.Expression.ParenthesizedExpression _ ->
             names
 
         Elm.Syntax.Expression.LetExpression letBlock ->
@@ -214,28 +214,28 @@ accumulateNamesFromExpression expression names =
             in
             List.foldl accumulateNamesFromLetDeclaration updatedNames letDeclarations
 
-        Elm.Syntax.Expression.CaseExpression caseBlock ->
+        Elm.Syntax.Expression.CaseExpression _ ->
             names
 
-        Elm.Syntax.Expression.LambdaExpression lambda ->
+        Elm.Syntax.Expression.LambdaExpression _ ->
             names
 
-        Elm.Syntax.Expression.RecordExpr nodes ->
+        Elm.Syntax.Expression.RecordExpr _ ->
             names
 
-        Elm.Syntax.Expression.ListExpr nodes ->
+        Elm.Syntax.Expression.ListExpr _ ->
             names
 
-        Elm.Syntax.Expression.RecordAccess node1 node2 ->
+        Elm.Syntax.Expression.RecordAccess _ _ ->
             names
 
-        Elm.Syntax.Expression.RecordAccessFunction string ->
+        Elm.Syntax.Expression.RecordAccessFunction _ ->
             names
 
-        Elm.Syntax.Expression.RecordUpdateExpression node nodes ->
+        Elm.Syntax.Expression.RecordUpdateExpression _ _ ->
             names
 
-        Elm.Syntax.Expression.GLSLExpression string ->
+        Elm.Syntax.Expression.GLSLExpression _ ->
             names
 
 
@@ -381,26 +381,26 @@ patternToNames pattern =
         Elm.Syntax.Pattern.UnitPattern ->
             []
 
-        Elm.Syntax.Pattern.CharPattern char ->
+        Elm.Syntax.Pattern.CharPattern _ ->
             []
 
-        Elm.Syntax.Pattern.StringPattern string ->
+        Elm.Syntax.Pattern.StringPattern _ ->
             []
 
-        Elm.Syntax.Pattern.IntPattern int ->
+        Elm.Syntax.Pattern.IntPattern _ ->
             []
 
-        Elm.Syntax.Pattern.HexPattern int ->
+        Elm.Syntax.Pattern.HexPattern _ ->
             []
 
-        Elm.Syntax.Pattern.FloatPattern float ->
+        Elm.Syntax.Pattern.FloatPattern _ ->
             []
 
         Elm.Syntax.Pattern.TuplePattern nodes ->
             List.map Elm.Syntax.Node.value nodes
                 |> List.concatMap patternToNames
 
-        Elm.Syntax.Pattern.RecordPattern nodes ->
+        Elm.Syntax.Pattern.RecordPattern _ ->
             []
 
         Elm.Syntax.Pattern.UnConsPattern node1 node2 ->
@@ -414,12 +414,12 @@ patternToNames pattern =
         Elm.Syntax.Pattern.VarPattern string ->
             [ string ]
 
-        Elm.Syntax.Pattern.NamedPattern qualifiedNameRef nodes ->
+        Elm.Syntax.Pattern.NamedPattern _ _ ->
             []
 
-        Elm.Syntax.Pattern.AsPattern node nameNode ->
+        Elm.Syntax.Pattern.AsPattern _ nameNode ->
             Elm.Syntax.Node.value nameNode
                 |> List.singleton
 
-        Elm.Syntax.Pattern.ParenthesizedPattern node ->
+        Elm.Syntax.Pattern.ParenthesizedPattern _ ->
             []
