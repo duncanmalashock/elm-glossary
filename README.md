@@ -1,5 +1,5 @@
 # elm-glossary
- Keep names consistent using static analysis
+See all names used in your Elm project using static analysis
 
 ## Usage
 
